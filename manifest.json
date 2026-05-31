@@ -1,0 +1,21 @@
+{
+  "name": "Nossa Linha do Tempo",
+  "short_name": "Nossa História",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#070d1f",
+  "theme_color": "#A78AFB",
+  "description": "Nossas memórias e mensagens para o futuro.",
+  "icons": [
+    {
+      "src": "icone.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icone.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

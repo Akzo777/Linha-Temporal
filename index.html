@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nosso Universo - Nossa História</title>
+  
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#A78AFB">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header style="text-align: center; padding: 40px 20px 20px;">
+    <h1 style="color: var(--gold); font-family: 'Cinzel', serif; font-size: 2.5rem; text-shadow: 0 0 15px rgba(252, 228, 200, 0.3);">Nossa História</h1>
+    <p style="color: var(--pc4); font-size: 1.1rem; margin-top: 10px;">Os capítulos mais bonitos que já escrevemos juntos...</p>
+  </header>
+
+  <div class="dashboard-header">
+    <div class="stats-panel">
+      <div class="stat-box">
+        <div class="stat-number" id="stat-dias">0</div>
+        <div class="stat-label">Dias Juntos</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="stat-momentos">0</div>
+        <div class="stat-label">Momentos Registrados</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="stat-viagens">0</div>
+        <div class="stat-label">Viagens Feitas</div>
+      </div>
+    </div>
+    
+    <button class="reviver-btn" onclick="reviverMemoria()">
+      <span>🎲</span> Reviver uma Memória Aleatória
+    </button>
+  </div>
+
+  <section class="content-tab active">
+    <div class="filters-bar">
+      <div class="filter-group">
+        <label for="filter-category">Categoria:</label>
+        <select id="filter-category" onchange="renderTimeline()">
+          <option value="todas">🌌 Todas as Lembranças</option>
+          <option value="romance">💖 Romance</option>
+          <option value="encontro">🍷 Encontros</option>
+          <option value="viagem">✈️ Viagens</option>
+          <option value="surpresa">🎁 Surpresas</option>
+          <option value="conquista">🏆 Conquistas</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="sort-date">Ordem:</label>
+        <select id="sort-date" onchange="renderTimeline()">
+          <option value="asc">🔼 Mais antigos primeiro</option>
+          <option value="desc">🔽 Mais recentes primeiro</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="timeline" id="timeline-container">
+      <div class="add-wrapper">
+        <button class="add-btn" onclick="openEditModal()">+</button>
+      </div>
+      <div id="moments-list"></div>
+    </div>
+  </section>
+
+  <div class="modal-overlay" id="view-modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModals()">&times;</span>
+      <div id="view-photo-container" style="display: none; cursor: zoom-in;" onclick="openLightbox(this.querySelector('img').src)">
+        <img id="view-photo" src="" alt="Foto do momento">
+        <div class="zoom-hint">🔍 Clique para ampliar</div>
+      </div>
+      <h2 id="view-title">Título</h2>
+      <p class="modal-date">
+        <span id="view-date">Data</span> <span id="view-time"></span><br>
+        <span id="view-time-ago" style="color: #A78AFB; font-weight: bold; font-size: 0.85rem;">Há X dias</span>
+      </p>
+      <div class="modal-desc" id="view-desc">Descrição do momento...</div>
+      <div class="modal-actions">
+        <button class="action-btn edit-action" onclick="editCurrentMoment()">Editar ✏️</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="edit-modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModals()">&times;</span>
+      <h2 id="edit-modal-title" style="color: #A78AFB; text-align: center; margin-bottom: 20px;">Registrar Momento</h2>
+      <input type="hidden" id="edit-id">
+      
+      <div class="input-group">
+        <label>Título do Momento:</label>
+        <input type="text" id="edit-title" placeholder="Ex: Nosso Primeiro Encontro">
+      </div>
+      <div class="input-group">
+        <label>Categoria (Emoji):</label>
+        <select id="edit-category">
+          <option value="romance">💖 Romance</option>
+          <option value="encontro">🍷 Encontro</option>
+          <option value="viagem">✈️ Viagem</option>
+          <option value="surpresa">🎁 Surpresa</option>
+          <option value="conquista">🏆 Conquista</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Data:</label>
+        <input type="date" id="edit-date">
+      </div>
+      <div class="checkbox-group">
+        <input type="checkbox" id="edit-has-time" onchange="toggleTimeInput()">
+        <label for="edit-has-time">Incluir horário?</label>
+      </div>
+      <div class="input-group" id="time-group" style="display: none;">
+        <label>Hora:</label>
+        <input type="time" id="edit-time">
+      </div>
+      <div class="input-group">
+        <label>Link da Foto (Opcional):</label>
+        <input type="url" id="edit-photo" placeholder="https://link-da-imagem.com/foto.jpg">
+      </div>
+      <div class="input-group">
+        <label>Descrição:</label>
+        <textarea id="edit-desc" placeholder="O que aconteceu de especial?"></textarea>
+      </div>
+      <div class="modal-actions" style="margin-top: 20px; display: flex; justify-content: space-between;">
+        <button class="action-btn delete-action" id="btn-delete" onclick="deleteMoment()" style="display: none;">Excluir 🗑️</button>
+        <div style="display: flex; gap: 10px;">
+          <button class="action-btn cancel-action" onclick="closeModals()">Cancelar</button>
+          <button class="action-btn save-action" onclick="saveMoment()">Salvar ✅</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="custom-alert-modal" style="z-index: 3000;">
+    <div class="modal-content" style="max-width: 400px; text-align: center; border-color: var(--pc4);">
+      <div id="alert-icon" style="font-size: 3.5rem; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(167, 138, 251, 0.4));">⚠️</div>
+      <h2 id="alert-title" style="color: var(--gold); font-family: 'Cinzel', serif; margin-bottom: 15px;">Aviso</h2>
+      <p id="alert-message" style="color: #e0e0e0; margin-bottom: 25px; line-height: 1.6;"></p>
+      <button class="add-btn" onclick="closeAlertModal()" style="width: 100%; border-radius: 8px; height: 45px; font-size: 1rem;">Entendi</button>
+    </div>
+  </div>
+
+  <div class="lightbox-overlay" id="lightbox-overlay" onclick="closeLightbox()">
+    <span class="lightbox-close">&times;</span>
+    <img id="lightbox-img" src="" alt="Imagem Ampliada">
+  </div>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
